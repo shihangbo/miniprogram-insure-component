@@ -4,7 +4,7 @@ Component({
   properties: {
     prop: {
       type: String,
-      value: 'index.properties'
+      value: 101972
     },
   },
   data: {

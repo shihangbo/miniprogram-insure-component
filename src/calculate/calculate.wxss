@@ -1,0 +1,225 @@
+/* pages/calculate/calculate.wxss */
+.contianer {
+  width: 100%;
+  overflow: hidden;
+}
+.block {
+  display: block;
+}
+.bb1 {
+  border-bottom: 1rpx solid #F5F5F5;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+.flex1 {
+  flex: 1;
+}
+.title {
+  color: #333;
+  font-weight: bold;
+  font-size: 34rpx;
+  line-height: 1;
+}
+.mb15 {
+  margin-bottom: 15rpx;
+}
+.mr15 {
+  margin-right: 15rpx;
+}
+.fs30 {
+  font-size: 30rpx;
+}
+.active {
+  border-color: #FC733A !important;
+  color: #FC733A !important;
+}
+
+ /* 头部样式 */
+.model-title {
+  box-sizing: border-box;
+  width: 100%;
+  height: 102rpx;
+  line-height: 102rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #F8F8F8;
+  overflow: hidden;
+}
+.model-title .close {
+  display: inline-block;
+  width: 60rpx;
+  height: 102rpx;
+  line-height: 102rpx;
+  font-size: 66rpx;
+  position: absolute;
+  top: 0;
+  right: 30rpx;
+  color: #333;
+  transform: rotate(-45deg);
+}
+
+/* 内容样式 */
+.model-content {
+  padding: 60rpx 47rpx;
+  overflow: hidden;
+  margin-bottom: 100rpx;
+}
+.insure-calculte .block {
+  height: 108rpx;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.insure-calculte .block .checkbox {
+  display: inline-block;
+  height: 54rpx;
+  line-height: 54rpx;
+  border-radius: 27rpx;
+  color: #333;
+  font-size: 30rpx;
+  text-align: center;
+  padding: 0 40rpx;
+  border: 2rpx solid #DDD;
+}
+.insure-calculte .block .checkbox + .checkbox {
+  margin-left: 24rpx;
+}
+.right-arrow {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: -10rpx;
+  margin-left: 12rpx;
+}
+.select-text {
+  font-size: 30rpx;
+  color: #333;
+}
+.calendar-text {
+  height: 54rpx;
+  line-height: 54rpx;
+  border-radius: 27rpx;
+  color: #333;
+  font-size: 30rpx;
+  text-align: center;
+  padding: 0 40rpx;
+  border: 2rpx solid #DDD;
+}
+.signin {
+  width: 36rpx;
+  height: 36rpx;
+  margin-right: -10rpx;
+  margin-left: 12rpx;
+}
+.detail-popup {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 90%;
+  background: red;
+}
+
+
+/* 底部样式 */
+.model-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 100rpx;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1rpx solid #F5F5F5;
+  background-color: #FFF;
+}
+.model-bottom .fix-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.fix-bottom .left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 39rpx;
+}
+.fix-bottom .left image {
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 1;
+}
+.fix-bottom .left text {
+  font-size: 20rpx;
+  font-weight: bold;
+  color: #333;
+  line-height: 1;
+}
+.fix-bottom .right {
+  display: flex;
+  flex-direction: inherit;
+  align-items: center;
+  margin-right: 48rpx;
+}
+.fix-bottom .right .pre {
+  color: #FD6728;
+  font-size: 24rpx;
+  font-weight: bold;
+  margin-right: 18rpx;
+}
+.fix-bottom .right .pre text {
+  font-size: 40rpx;
+}
+.fix-bottom .right .btn {
+  display: block;
+  width: 208rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 36rpx;
+  font-size: 28rpx;
+  color: #FFF;
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(to right , #FFAA00, #FE6E00);
+}
+
+
+.modal-mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity: 0.5;
+  overflow: hidden;
+  z-index: 1110;
+  color: #fff;
+}
+
+.modal-dialog {
+  width: 100%;
+  height: 90%;
+  overflow: hidden;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 1111;
+  background: #f9f9f9;
+  border-top-right-radius: 36rpx;
+  border-top-left-radius: 36rpx;
+}
+.modal-title {
+  padding-top: 50rpx;
+  font-size: 36rpx;
+  color: #030303;
+  text-align: center;
+}
+.modal-content {
+  padding: 50rpx 32rpx;
+  text-align: center;
+}
+

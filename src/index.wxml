@@ -1,2 +1,2 @@
-<view class="index other">{{prop}}-{{flag}}</view>
-<other></other>
+<view class="index other">测试：{{prop}}-{{flag}}</view>
+<calculate></calculate>
