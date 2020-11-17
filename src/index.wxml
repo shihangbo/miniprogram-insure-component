@@ -1,2 +1,7 @@
 <view class="index other">测试：{{prop}}-{{flag}}</view>
-<calculate></calculate>
+<calculate
+  closeable
+  productFeatureContentHeight="50%"
+  title="投保绿色通道"
+  bindinsureApply="insureApply"
+  ></calculate>

@@ -20,5 +20,10 @@ Component({
         }
       })
     }
+  },
+  methods: {
+    insureApply(e) {
+      console.log(e)
+    }
   }
 })

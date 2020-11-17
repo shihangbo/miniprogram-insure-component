@@ -1,7 +1,7 @@
 {
   "component": true,
   "usingComponents": {
-    "calculate": "./calculate/calculate"
+    "calculate": "./calculate"
   },
   "componentGenerics": {
     "genericsTest": true

@@ -1,29 +1,64 @@
-import fetch from '../http-promise'
+import fetch from './http-promise'
 
 Component({
   properties: {
-    prop: {
-      type: String,
-      value: 'other.properties'
+    // 产品特色 是否展示
+    productFeatureShow: {
+      type: Boolean,
+      value: true
     },
+    // 产品特色 浮层高度
+    productFeatureContentHeight: {
+      type: String,
+      value: '90%'
+    },
+    // 产品特色 关闭按钮控制
+    productFeatureCloseable: {
+      type: Boolean,
+      value: false
+    },
+    // 用户userUuid
+    uuid: {
+      type: String,
+      value: '153cdcf26b66434e94079bca08666678'
+    },
+    // 产品id
+    productId: {
+      type: Number,
+      optionalTypes: [String],
+      value: 101972
+    },
+    // 关闭按钮控制
+    closeable: {
+      type: Boolean,
+      value: false
+    },
+    // 标题名称
+    title: {
+      type: String,
+      value: undefined
+    }
   },
   data: {
     name: 'other',
     getCalculateApi: '/api/product/ability/calculate',
     getProductInfoApi: '/api/product/data/getProductInfo',
     getProductContentApi: '/api/product/data/getProductContent',
-    uuid: '153cdcf26b66434e94079bca08666678',
-    productId: 101972,
+    uuid: '',
+    productId: undefined,
     widgets: undefined,
     currentData: undefined,
     index: 0,
-    date: '2016-09-01',
     total_premium: 0,
     showPopup: false,
-    productInfo: undefined
+    productInfo: undefined,
+    content: undefined,
+    renderedByHtml: false,
+    customStyle: ''
   },
   lifetimes: {
     attached() {
+      this.init()
       const productInfoParams = {
         url: `${this.data.getProductInfoApi}?userUuid=${this.data.uuid}`,
         data: {
@@ -44,6 +79,33 @@ Component({
     }
   },
   methods: {
+    init() {
+      const props = this.properties
+      this.setData({
+        customStyle: 'height:' + props.productFeatureContentHeight,
+        uuid: props.uuid,
+        productId: props.productId,
+      })
+    },
+    // 投保申请
+    insureApply() {
+      const currentData = []
+      this.data.widgets.forEach(item => {
+        if (item.index === undefined) {
+          currentData.push(item.current)
+        } else if (item.index || Number(item.index) === 0) {
+          const temp = JSON.parse(JSON.stringify(item.current))
+          temp.v = item.opts[item.key][item.index].value
+          currentData.push(temp)
+        } else {
+          currentData.push(item.current)
+        }
+      })
+      const params = {
+        currentData
+      }
+      this.triggerEvent('insureApply', params)
+    },
     getProductInfo(params) {
       fetch.request(params)
         .then(res => {
@@ -170,31 +232,21 @@ Component({
         widgets: cpWidgets
       })
     },
-    apply() {
-      const currentData = []
-      this.data.widgets.forEach(item => {
-        if (item.index === undefined) {
-          currentData.push(item.current)
-        } else if (item.index || Number(item.index) === 0) {
-          const temp = JSON.parse(JSON.stringify(item.current))
-          temp.v = item.opts[item.key][item.index].value
-          currentData.push(temp)
-        } else {
-          currentData.push(item.current)
-        }
-      })
-      console.log('提交数据：', currentData)
-    },
     getProductContent(params) {
       fetch.request(params)
         .then(res => {
-          const content = res.feature.content.replace(/<p>/g, '').replace(/<\/p>/g, '').replace(/img/g, 'image')
-
-          console.log(1111, content)
-          // this.setData({
-          //   content,
-          //   showPopup: false
-          // })
+          const contentOrigin = res.feature.content.replace(/<p>/g, '').replace(/<\/p>/g, '').split('/>')
+          let content = ''
+          contentOrigin.forEach(item => {
+            if (item) {
+              content += (item + '/>')
+            }
+          })
+          this.setData({
+            content,
+            showPopup: true,
+            renderedByHtml: true
+          })
         })
         .catch(err => {
           wx.showToast({
