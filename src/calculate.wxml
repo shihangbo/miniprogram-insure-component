@@ -2,7 +2,7 @@
 <view class="contianer">
   <view class="model-title">
     <text wx:if="{{title}}" class="title">{{title}}</text>
-    <text wx:if="{{closeable}}" class="close">+</text>
+    <text wx:if="{{closeable}}" class="close" bindtap="closeFn">+</text>
   </view>
   <view class="model-content">
     <view class="title mb15" wx:if="{{productInfo && productInfo.name}}">{{productInfo.name}}</view>
@@ -65,7 +65,7 @@
       </view>
       <view class="right">
         <view class="pre">预计保费：<text>{{total_premium}}</text>元</view>
-        <view class="btn" bindtap="insureApply">投保申请</view>
+        <view class="btn" bindtap="applyInsure">投保申请</view>
       </view>
     </view>
   </view>

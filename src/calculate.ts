@@ -88,7 +88,7 @@ Component({
       })
     },
     // 投保申请
-    insureApply() {
+    applyInsure() {
       const currentData = []
       this.data.widgets.forEach(item => {
         if (item.index === undefined) {
@@ -104,7 +104,11 @@ Component({
       const params = {
         currentData
       }
-      this.triggerEvent('insureApply', params)
+      this.triggerEvent('applyInsure', params)
+    },
+    // 当前页 - 关闭事件
+    closeInsure() {
+      this.triggerEvent('closeInsure')
     },
     getProductInfo(params) {
       fetch.request(params)
