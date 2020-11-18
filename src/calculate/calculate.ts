@@ -1,4 +1,4 @@
-import fetch from './http-promise'
+import fetch from '../utils/http-promise'
 
 Component({
   properties: {
@@ -119,7 +119,7 @@ Component({
         })
         .catch(err => {
           wx.showToast({
-            title: err.data.msg || '接口出错',
+            title: (err.data && err.data.msg) || '接口出错',
             icon: 'none',
             duration: 3000
           })
@@ -137,7 +137,7 @@ Component({
         })
         .catch(err => {
           wx.showToast({
-            title: err.data.msg || '接口出错',
+            title: (err.data && err.data.msg) || '接口出错',
             icon: 'none',
             duration: 3000
           })
@@ -254,7 +254,7 @@ Component({
         })
         .catch(err => {
           wx.showToast({
-            title: err.data.msg || '接口出错',
+            title: (err.data && err.data.msg) || '接口出错',
             icon: 'none',
             duration: 3000
           })
