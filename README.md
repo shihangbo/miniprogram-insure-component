@@ -10,7 +10,7 @@ npm install -S miniprogram-insure-component
 
 // 第二步：引入，需在对应的小程序页面的.json文件增加代码
 "usingComponents": {
-  "calculate": "miniprogram-insure-component/calculate"
+  "calculate": "miniprogram-insure-component/calculate/calculate"
 }
 
 // 第三不：使用自定义组件
