@@ -1,6 +1,6 @@
 {
   "name": "miniprogram-insure-component",
-  "version": "1.0.4",
+  "version": "1.0.7",
   "description": "",
   "main": "miniprogram_dist/index.js",
   "scripts": {
@@ -30,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/shihangbo/miniprogram-insure-component.git"
+    "url": "https://git.winbaoxian.com/shihangbo553/miniprogram-insure-component.git"
   },
   "author": "wechat-miniprogram",
   "license": "MIT",
