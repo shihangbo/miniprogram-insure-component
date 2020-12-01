@@ -1,6 +1,6 @@
 <!--pages/calculate/calculate.wxml-->
 <view class="contianer">
-  <view class="model-title">
+  <view class="model-title" wx:if="{{showHeader}}">
     <text wx:if="{{title}}" class="title">{{title}}</text>
     <text wx:if="{{closeable}}" class="close" bindtap="closeFn">+</text>
   </view>
@@ -69,20 +69,9 @@
       </view>
     </view>
   </view>
-  <!-- <view class="modal">
-    <view class="modal-mask" bindtap="colseDetailPopup" catchtouchmove="preventTouchMove" wx:if="{{showPopup}}"></view>
-    <view class="modal-dialog" wx:if="{{showPopup}}" catchtouchmove="preventTouchMove">
-      <view class="modal-title" wx:if="{{productInfo && productInfo.name}}">{{productInfo.name}}</view>
-      <view class="modal-content" wx:if="{{content}}">
-        <block wx:if="{{renderedByHtml}}">
-          <rich-text nodes="{{content}}"></rich-text>
-        </block>
-      </view>
-    </view>
-  </view> -->
   <van-popup
-    show="{{ showPopup }}"
-    bindtap="colseDetailPopup"
+    show="{{showPopup}}"
+    bindtap="closeDetailPopup"
     custom-style="{{customStyle}}"
     position="bottom"
     round

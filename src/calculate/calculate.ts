@@ -20,13 +20,30 @@ Component({
     // 用户userUuid
     uuid: {
       type: String,
-      value: '153cdcf26b66434e94079bca08666678'
+      required: true
     },
     // 产品id
     productId: {
       type: Number,
       optionalTypes: [String],
-      value: 101972
+      required: true
+    },
+    // 直播间的 uuid
+    meetingUuid: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // 微信token
+    wechatToken: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // header 整体控制
+    showHeader: {
+      type: Boolean,
+      value: false
     },
     // 关闭按钮控制
     closeable: {
@@ -40,41 +57,45 @@ Component({
     }
   },
   data: {
-    name: 'other',
-    getCalculateApi: '/api/product/ability/calculate',
-    getProductInfoApi: '/api/product/data/getProductInfo',
-    getProductContentApi: '/api/product/data/getProductContent',
-    uuid: '',
-    productId: undefined,
-    widgets: undefined,
-    currentData: undefined,
-    index: 0,
-    total_premium: 0,
-    showPopup: false,
-    productInfo: undefined,
-    content: undefined,
-    renderedByHtml: false,
-    customStyle: ''
+    getCalculateApi: '/api/product/ability/calculate', // 试算API
+    getProductInfoApi: '/api/product/data/getProductInfo', // 产品信息API
+    getProductContentApi: '/api/product/data/getProductContent', // 产品特色API
+    submitCalculateApi: '/api/product/ability/submitCalculate', // 试算数据提交API，获取
+    widgets: undefined, // 试算因子集合
+    total_premium: 0, // 预计保费
+    showPopup: false, // 产品特色半浮层控制
+    productInfo: undefined, // 产品信息保存字段
+    content: undefined, // 产品特色保存字段
+    customStyle: '', // 产品特色半浮层高度定义
+    observerIndex: 0 // 数据监听器
+  },
+  observers: {
+    observerIndex() {
+      this.reCalculate()
+    }
   },
   lifetimes: {
     attached() {
+      // 初始化参数
       this.init()
       const productInfoParams = {
-        url: `${this.data.getProductInfoApi}?userUuid=${this.data.uuid}`,
+        url: `${this.data.getProductInfoApi}?userUuid=${this.properties.uuid}`,
         data: {
-          productId: this.data.productId
+          productId: this.properties.productId
         },
         method: 'POST'
       }
+      // 获取产品信息
       this.getProductInfo(productInfoParams)
       const params = {
-        url: `${this.data.getCalculateApi}?userUuid=${this.data.uuid}`,
+        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
         data: {
-          currentData: null,
-          product_id: this.data.productId
+          current_data: null,
+          product_id: this.properties.productId
         },
         method: 'POST'
       }
+      // 获取试算信息
       this.calculate(params)
     }
   },
@@ -83,11 +104,10 @@ Component({
       const props = this.properties
       this.setData({
         customStyle: 'height:' + props.productFeatureContentHeight,
-        uuid: props.uuid,
         productId: props.productId,
       })
     },
-    // 投保申请
+    // 事件处理：投保申请
     applyInsure() {
       const currentData = []
       this.data.widgets.forEach(item => {
@@ -101,15 +121,159 @@ Component({
           currentData.push(item.current)
         }
       })
-      const params = {
-        currentData
-      }
-      this.triggerEvent('applyInsure', params)
+      this.submitCalculate(currentData)
     },
-    // 当前页 - 关闭事件
+    submitCalculate(currentData) {
+      if (!this.properties.uuid) {
+        wx.showToast({
+          title: '请求参数有误：no uuid',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.productId) {
+        wx.showToast({
+          title: '请求参数有误：no productId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      // if (!this.properties.meetingUuid) {
+      //   wx.showToast({
+      //     title: '请求参数有误：no meetingUuid',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
+      // if (!this.properties.wechatToken) {
+      //   wx.showToast({
+      //     title: '请求参数有误：no wechatToken',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
+      const params = {
+        url: `${this.data.submitCalculateApi}?userUuid=${this.properties.uuid}`,
+        data: {
+          current_data: currentData,
+          product_id: this.properties.productId,
+          meetingUuid: this.properties.meetingUuid,
+          wechatToken: this.properties.wechatToken,
+        },
+        method: 'POST'
+      }
+      fetch.request(params)
+        .then(res => {
+          if (res) {
+            const params = {
+              current_data: currentData,
+              total_premium: this.data.total_premium,
+              status: 'ok'
+            }
+            this.triggerEvent('applyInsure', params)
+          } else {
+            const params = {
+              err: res,
+              status: 'fail'
+            }
+            this.triggerEvent('applyInsure', params)
+          }
+        })
+        .catch(err => {
+          wx.showToast({
+            title: (err.data && err.data.msg) || '接口出错',
+            icon: 'none',
+            duration: 3000
+          })
+        })
+    },
+    // 防抖 + 监听
+    debounce(method, context, delay, cpWidgets, currTarget) {
+      clearTimeout(method.id)
+      method.id = setTimeout(function () {
+        method.call(context, cpWidgets, currTarget)
+      }, delay || 300)
+    },
+    observerData(cpWidgets, currTarget = {}) {
+      if (currTarget.cal_key) { // 试算
+        this.setData({
+          widgets: cpWidgets,
+          observerIndex: this.data.observerIndex + 1
+        })
+      } else {
+        this.setData({
+          widgets: cpWidgets
+        })
+      }
+    },
+    // 事件处理：点击选择tab
+    bindSelectChange(e) {
+      // console.log('select发送选择改变，携带值为', e)
+      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
+      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
+      const currClickItem = e.currentTarget.dataset.it || e.target.dataset.it
+      let orginTarget
+      if (currTarget.duty) {
+        orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
+          item.key === currTarget.key &&
+          item.duty === currTarget.duty)
+      } else {
+        orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
+          item.key === currTarget.key)
+      }
+      orginTarget.current.v = currClickItem.value
+      // 试算
+      const self = this
+      this.debounce(self.observerData, self, undefined, cpWidgets, currTarget)
+    },
+    // 事件处理：半浮层选择
+    bindPickerChange(e) {
+      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
+      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
+      const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
+        item.key === currTarget.key)
+      orginTarget.index = Number(e.detail.value)
+      // 试算
+      const self = this
+      this.debounce(self.observerData, self, undefined, cpWidgets, currTarget)
+    },
+    // 事件处理：日期
+    bindDateChange(e) {
+      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
+      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
+      const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
+        item.key === currTarget.key)
+      orginTarget.current.v = e.detail.value
+      // 试算
+      const self = this
+      this.debounce(self.observerData, self, undefined, cpWidgets, currTarget)
+    },
+    // 事件处理：展示产品特色
+    showDetailPopup() {
+      const params = {
+        url: `${this.data.getProductContentApi}?userUuid=${this.properties.uuid}`,
+        data: {
+          id: this.properties.productId
+        },
+        method: 'POST'
+      }
+      this.getProductContent(params)
+    },
+    // 事件处理：关闭产品特色
+    closeDetailPopup() {
+      this.setData({
+        showPopup: false
+      })
+    },
+    // 事件处理：关闭当前页，showHeader为true时，可以控制
     closeInsure() {
       this.triggerEvent('closeInsure')
     },
+    // 接口处理
     getProductInfo(params) {
       fetch.request(params)
         .then(res => {
@@ -131,7 +295,7 @@ Component({
           const data = this.translateData(res)
           this.setData({
             widgets: data.widgets,
-            currentData: data.current_data,
+            current_data: data.current_data,
             total_premium: Number(data.total_premium).toFixed(2)
           })
         })
@@ -143,6 +307,73 @@ Component({
           })
         })
     },
+    reCalculate() {
+      wx.showLoading({
+        title: '加载中',
+      })
+      const currentData = []
+      this.data.widgets.forEach(item => {
+        if (item.index === undefined) {
+          currentData.push(item.current)
+        } else if (item.index || Number(item.index) === 0) {
+          const temp = JSON.parse(JSON.stringify(item.current))
+          temp.v = item.opts[item.key][item.index].value
+          currentData.push(temp)
+        } else {
+          currentData.push(item.current)
+        }
+      })
+      const params = {
+        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
+        data: {
+          current_data: currentData,
+          product_id: this.properties.productId
+        },
+        method: 'POST'
+      }
+      fetch.request(params)
+        .then(res => {
+          const data = this.translateData(res)
+          this.setData({
+            widgets: data.widgets,
+            currentData: data.current_data,
+            total_premium: Number(data.total_premium).toFixed(2)
+          })
+          wx.hideLoading()
+        })
+        .catch(err => {
+          wx.hideLoading()
+          wx.showToast({
+            title: (err.data && err.data.msg) || '接口出错',
+            icon: 'none',
+            duration: 3000
+          })
+        })
+    },
+    getProductContent(params) {
+      fetch.request(params)
+        .then(res => {
+          const contentOrigin = res.feature.content.replace(/<p>/g, '').replace(/<\/p>/g, '').split('/>')
+          let content = ''
+          contentOrigin.forEach(item => {
+            if (item) {
+              content += (item + '/>')
+            }
+          })
+          this.setData({
+            content,
+            showPopup: true
+          })
+        })
+        .catch(err => {
+          wx.showToast({
+            title: (err.data && err.data.msg) || '接口出错',
+            icon: 'none',
+            duration: 3000
+          })
+        })
+    },
+    // 数据转换
     translateData(res) {
       const widgets = res.widgets
       const currentData = res.current_data
@@ -153,8 +384,13 @@ Component({
       widgets.forEach(item => {
         let current
         // 增加current字段，保存current_data的数据
-        item.current = current = currentData.find(it => it.k === item.key &&
-          it.risk === item.riskCode)
+        if (item.duty) {
+          item.current = current = currentData.find(it => it.k === item.key &&
+            it.risk === item.riskCode && item.duty === it.d)
+        } else {
+          item.current = current = currentData.find(it => it.k === item.key &&
+            it.risk === item.riskCode)
+        }
         switch (item.type) {
           case 'text':
             this.translateText(item)
@@ -196,86 +432,6 @@ Component({
     translateCalendar(item, current) {
       // 增加current字段，保存currentData的数据
       item.current = current
-    },
-    bindSelectChange(e) {
-      // console.log('select发送选择改变，携带值为', e)
-      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
-      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
-      const currClickItem = e.currentTarget.dataset.it || e.target.dataset.it
-      let orginTarget
-      if (currTarget.duty) {
-        orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
-          item.key === currTarget.key &&
-          item.duty === currTarget.duty)
-      } else {
-        orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
-          item.key === currTarget.key)
-      }
-      orginTarget.current.v = currClickItem.value
-      this.setData({
-        widgets: cpWidgets
-      })
-    },
-    bindPickerChange(e) {
-      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
-      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
-      const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
-        item.key === currTarget.key)
-      orginTarget.index = Number(e.detail.value)
-      this.setData({
-        widgets: cpWidgets
-      })
-    },
-    bindDateChange(e) {
-      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
-      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
-      const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
-        item.key === currTarget.key)
-      orginTarget.current.v = e.detail.value
-      this.setData({
-        widgets: cpWidgets
-      })
-    },
-    getProductContent(params) {
-      fetch.request(params)
-        .then(res => {
-          const contentOrigin = res.feature.content.replace(/<p>/g, '').replace(/<\/p>/g, '').split('/>')
-          let content = ''
-          contentOrigin.forEach(item => {
-            if (item) {
-              content += (item + '/>')
-            }
-          })
-          this.setData({
-            content,
-            showPopup: true,
-            renderedByHtml: true
-          })
-        })
-        .catch(err => {
-          wx.showToast({
-            title: (err.data && err.data.msg) || '接口出错',
-            icon: 'none',
-            duration: 3000
-          })
-        })
-    },
-    showDetailPopup() {
-      const params = {
-        url: `${this.data.getProductContentApi}?userUuid=${this.data.uuid}`,
-        data: {
-          id: this.data.productId
-        },
-        method: 'POST'
-      }
-      this.getProductContent(params)
-    },
-    colseDetailPopup() {
-      this.setData({
-        showPopup: false
-      })
-    },
-    preventTouchMove() {
-    },
+    }
   }
 })
