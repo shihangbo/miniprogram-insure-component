@@ -1,5 +1,9 @@
 
-const deBvaseUrl = 'https://insurance2a-api.wyins.net.cn'
+const devBaseUrl = 'https://insurance2a-api.wyins.net.cn'
+const proBaseUrl = 'https://insurance2a-api.wyins.net'
+const accountInfo = wx.getAccountInfoSync()
+const env = accountInfo.miniProgram.envVersion
+const BASE_URL = env === 'release' ? proBaseUrl : devBaseUrl
 class HTTP {
   request({
     url, data = {}, header = {}, method = 'GET'
@@ -10,9 +14,9 @@ class HTTP {
   }
 
   _request(url, data, header, method, resolve, reject) {
-    console.log(this)
+    console.log(this, 'env: ', env, 'BASE_URL', BASE_URL)
     wx.request({
-      url: `${deBvaseUrl + url}`,
+      url: `${BASE_URL + url}`,
       data,
       header,
       method,

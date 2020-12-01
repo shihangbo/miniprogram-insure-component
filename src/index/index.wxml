@@ -1,7 +1,9 @@
-<view class="index other">测试：{{prop}}-{{flag}}</view>
+
 <calculate
   closeable
   productFeatureContentHeight="50%"
   title="投保绿色通道"
-  bindinsureApply="insureApply"
+  bindapplyInsure="applyInsure"
+  uuid="153cdcf26b66434e94079bca08666678"
+  productId="101972"
   ></calculate>

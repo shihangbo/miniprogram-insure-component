@@ -22,7 +22,7 @@ Component({
     }
   },
   methods: {
-    insureApply(e) {
+    applyInsure(e) {
       console.log(e)
     }
   }
