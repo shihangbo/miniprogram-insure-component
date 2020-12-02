@@ -19,8 +19,7 @@ Component({
     },
     // 用户userUuid
     uuid: {
-      type: String,
-      required: true
+      type: String
     },
     // 产品id
     productId: {
@@ -36,6 +35,18 @@ Component({
     },
     // 微信token
     wechatToken: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // 微信appId
+    wechatAppId: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // 邀请人的appId
+    appId: {
       type: String,
       optionalTypes: [Number],
       required: true
@@ -78,8 +89,19 @@ Component({
     attached() {
       // 初始化参数
       this.init()
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const productInfoParams = {
-        url: `${this.data.getProductInfoApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getProductInfoApi}${url}`,
         data: {
           productId: this.properties.productId
         },
@@ -88,7 +110,7 @@ Component({
       // 获取产品信息
       this.getProductInfo(productInfoParams)
       const params = {
-        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: null,
           product_id: this.properties.productId
@@ -124,14 +146,14 @@ Component({
       this.submitCalculate(currentData)
     },
     submitCalculate(currentData) {
-      if (!this.properties.uuid) {
-        wx.showToast({
-          title: '请求参数有误：no uuid',
-          icon: 'none',
-          duration: 3000
-        })
-        return
-      }
+      // if (!this.properties.uuid) {
+      //   wx.showToast({
+      //     title: '请求参数有误：no uuid',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
       if (!this.properties.productId) {
         wx.showToast({
           title: '请求参数有误：no productId',
@@ -140,29 +162,57 @@ Component({
         })
         return
       }
-      // if (!this.properties.meetingUuid) {
-      //   wx.showToast({
-      //     title: '请求参数有误：no meetingUuid',
-      //     icon: 'none',
-      //     duration: 3000
-      //   })
-      //   return
-      // }
-      // if (!this.properties.wechatToken) {
-      //   wx.showToast({
-      //     title: '请求参数有误：no wechatToken',
-      //     icon: 'none',
-      //     duration: 3000
-      //   })
-      //   return
-      // }
+      if (!this.properties.meetingUuid) {
+        wx.showToast({
+          title: '请求参数有误：no meetingUuid',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.wechatToken) {
+        wx.showToast({
+          title: '请求参数有误：no wechatToken',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.wechatAppId) {
+        wx.showToast({
+          title: '请求参数有误：no wechatAppId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.appId) {
+        wx.showToast({
+          title: '请求参数有误：no appId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const params = {
-        url: `${this.data.submitCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.submitCalculateApi}${url}`,
         data: {
           current_data: currentData,
           product_id: this.properties.productId,
           meetingUuid: this.properties.meetingUuid,
           wechatToken: this.properties.wechatToken,
+          wechatAppId: this.properties.wechatAppId
         },
         method: 'POST'
       }

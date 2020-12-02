@@ -24,10 +24,12 @@ npm install -S miniprogram-insure-component
 ## Attribute
 | 参数| 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- |   --- |  --- |
-|uuid|（必传）用户userUuid，投保申请时有为空校验，测试使用：153cdcf26b66434e94079bca08666678|String|无|-|
+|uuid|保险师传用户userUuid，中介通传openId，测试使用：153cdcf26b66434e94079bca08666678|String|无|-|
 |productId|（必传）产品ID，投保申请时有为空校验，测试使用：101972|String|无|-|
-|meetingUuid|（必传）直播间的uuid，投保申请时不进行校验|String|无|-|
-|wechatToken|（必传）微信token，投保申请时不进行校验|String|无|-|
+|meetingUuid|（必传）直播间的uuid，投保申请时有为空校验|String|无|-|
+|wechatToken|（必传）微信token，token + 微信appId 换取 openId，投保申请时有为空校验|String|无|-|
+|wechatAppId|（必传）微信appid，token + 微信appId 换取 openId，投保申请时有为空校验|String|无|-|
+|appId|（必传）邀请人appId，openId + 保险师/中介通appid 换取邀请人的userUuid，投保申请时有为空校验|String|无|-|
 |productFeatureShow|产品特色-功能是否展示|Boolean|true|-|
 |productFeatureContentHeight|产品特色-浮层高度，productFeatureShow为true是才有效|String|默认90%，当前支持两种格式：px，百分比；|-|
 |productFeatureCloseable|产品特色-浮层是否关闭按钮控制|Boolean|false|-|
