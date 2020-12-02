@@ -24,6 +24,9 @@ Component({
   methods: {
     applyInsure(e) {
       console.log(e)
+    },
+    onFeatureCustom() {
+      console.log('展示自定义产品特色：onFeatureCustom')
     }
   }
 })

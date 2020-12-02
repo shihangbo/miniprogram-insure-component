@@ -10,4 +10,6 @@
   wechatToken="222"
   wechatAppId="333"
   appId="518001"
+  productFeatureCustom
+  bindonFeatureCustom="onFeatureCustom"
   ></calculate>

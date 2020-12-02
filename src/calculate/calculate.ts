@@ -2,10 +2,15 @@ import fetch from '../utils/http-promise'
 
 Component({
   properties: {
-    // 产品特色 是否展示
+    // 产品特色 是否展示（组件自带）
     productFeatureShow: {
       type: Boolean,
       value: true
+    },
+    // 产品特色 是否展示（用户提供）
+    productFeatureCustom: {
+      type: Boolean,
+      value: false
     },
     // 产品特色 浮层高度
     productFeatureContentHeight: {
@@ -304,14 +309,18 @@ Component({
     },
     // 事件处理：展示产品特色
     showDetailPopup() {
-      const params = {
-        url: `${this.data.getProductContentApi}?userUuid=${this.properties.uuid}`,
-        data: {
-          id: this.properties.productId
-        },
-        method: 'POST'
+      if (this.properties.productFeatureCustom) {
+        this.triggerEvent('onFeatureCustom')
+      } else {
+        const params = {
+          url: `${this.data.getProductContentApi}?userUuid=${this.properties.uuid}`,
+          data: {
+            id: this.properties.productId
+          },
+          method: 'POST'
+        }
+        this.getProductContent(params)
       }
-      this.getProductContent(params)
     },
     // 事件处理：关闭产品特色
     closeDetailPopup() {

@@ -36,9 +36,11 @@ npm install -S miniprogram-insure-component
 |showHeader|控制头部内容展示的参数，只有当参数开启，closeable和title才有效，默认关闭|Boolean|false|-|
 |closeable|当前页面-关闭按钮控制（showHeader为true时有效）|Boolean|false|-|
 |title|当前页面-标题名称（showHeader为true时有效）|String|无|-|
+|productFeatureCustom|产品特色浮层是否使用组件自带的，true:使用组件自带的; false:使用自定义展示(需监听onFeatureCustom事件),|String|无|-|
 
 ## Event
 | 事件名称 | 说明 | 参数 |
 | --- | --- | --- |
 | closeInsure | 点击当前页 X 按钮触发 | closeable属性为true时有效 |
-| applyInsure | 点击投保申请触发 | 事件会进行当前投保状态的保存（api保存），成功返回: detail: {status: 'ok', currentData: '试算因子集合', total_premium: '预计保费'}，失败返回: detail: {status: 'faile', err: '报错对象'} |
+| applyInsure | 点击投保申请触发 | 事件会进行当前投保状态的保存（api保存），成功返回: detail: {status: 'ok', currentData: '试算因子集合', total_premium: '预计保费'}，失败返回: detail: {status: 'fail', err: '报错对象'} |
+| onFeatureCustom | 点击产品特色触发 | productFeatureShow为true是有效 |
