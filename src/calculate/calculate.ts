@@ -92,6 +92,7 @@ Component({
   },
   lifetimes: {
     attached() {
+      console.log('insure-component:1:attached')
       // 初始化参数
       this.init()
       let url = ''
@@ -334,8 +335,10 @@ Component({
     },
     // 接口处理
     getProductInfo(params) {
+      console.log('insure-component:2:getProductInfo', params)
       fetch.request(params)
         .then(res => {
+          console.log('insure-component:3:getProductInfo', res)
           this.setData({
             productInfo: res
           })
@@ -349,9 +352,11 @@ Component({
         })
     },
     calculate(params) {
+      console.log('insure-component:4:calculate', params)
       fetch.request(params)
         .then(res => {
           const data = this.translateData(res)
+          console.log('insure-component:5:calculate', data)
           this.setData({
             widgets: data.widgets,
             current_data: data.current_data,
