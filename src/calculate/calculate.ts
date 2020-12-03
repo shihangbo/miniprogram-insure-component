@@ -313,8 +313,20 @@ Component({
       if (this.properties.productFeatureCustom) {
         this.triggerEvent('onFeatureCustom')
       } else {
+        this.init()
+        let url = ''
+        if (this.properties.uuid) {
+          url += `?userUuid=${this.properties.uuid}`
+        }
+        if (this.properties.appId) {
+          if (url.indexOf('?') > -1) {
+            url += `&appId=${this.properties.appId}`
+          } else {
+            url += `?appId=${this.properties.appId}`
+          }
+        }
         const params = {
-          url: `${this.data.getProductContentApi}?userUuid=${this.properties.uuid}`,
+          url: `${this.data.getProductContentApi}${url}`,
           data: {
             id: this.properties.productId
           },
@@ -387,8 +399,19 @@ Component({
           currentData.push(item.current)
         }
       })
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const params = {
-        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: currentData,
           product_id: this.properties.productId
