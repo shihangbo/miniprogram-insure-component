@@ -2,6 +2,11 @@ import fetch from '../utils/http-promise'
 
 Component({
   properties: {
+    // 小程序环境
+    mode: {
+      type: String,
+      value: 'development'
+    },
     // 产品特色 是否展示（组件自带）
     productFeatureShow: {
       type: Boolean,
@@ -111,7 +116,8 @@ Component({
         data: {
           productId: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       // 获取产品信息
       this.getProductInfo(productInfoParams)
@@ -121,7 +127,8 @@ Component({
           current_data: null,
           product_id: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       // 获取试算信息
       this.calculate(params)
@@ -220,7 +227,8 @@ Component({
           wechatToken: this.properties.wechatToken,
           wechatAppId: this.properties.wechatAppId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       fetch.request(params)
         .then(res => {
@@ -330,7 +338,8 @@ Component({
           data: {
             id: this.properties.productId
           },
-          method: 'POST'
+          method: 'POST',
+          mode: this.properties.mode
         }
         this.getProductContent(params)
       }
@@ -416,7 +425,8 @@ Component({
           current_data: currentData,
           product_id: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       fetch.request(params)
         .then(res => {

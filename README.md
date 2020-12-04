@@ -24,6 +24,7 @@ npm install -S miniprogram-insure-component
 ## Attribute
 | 参数| 说明 | 类型 | 默认值 | 版本 |
 | --- | --- | --- |   --- |  --- |
+|mode|小程序自定义环境变量，区分development/production，默认development 测试环境|String|development|-|
 |uuid|保险师传用户userUuid，中介通传openId，测试使用：153cdcf26b66434e94079bca08666678|String|无|-|
 |productId|（必传）产品ID，投保申请时有为空校验，测试使用：101972|String|无|-|
 |meetingUuid|（必传）直播间的uuid，投保申请时有为空校验|String|无|-|
