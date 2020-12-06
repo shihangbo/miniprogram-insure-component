@@ -2,10 +2,20 @@ import fetch from '../utils/http-promise'
 
 Component({
   properties: {
-    // 产品特色 是否展示
+    // 小程序环境
+    mode: {
+      type: String,
+      value: 'development'
+    },
+    // 产品特色 是否展示（组件自带）
     productFeatureShow: {
       type: Boolean,
       value: true
+    },
+    // 产品特色 是否展示（用户提供）
+    productFeatureCustom: {
+      type: Boolean,
+      value: false
     },
     // 产品特色 浮层高度
     productFeatureContentHeight: {
@@ -19,8 +29,7 @@ Component({
     },
     // 用户userUuid
     uuid: {
-      type: String,
-      required: true
+      type: String
     },
     // 产品id
     productId: {
@@ -36,6 +45,18 @@ Component({
     },
     // 微信token
     wechatToken: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // 微信appId
+    wechatAppId: {
+      type: String,
+      optionalTypes: [Number],
+      required: true
+    },
+    // 邀请人的appId
+    appId: {
       type: String,
       optionalTypes: [Number],
       required: true
@@ -76,24 +97,38 @@ Component({
   },
   lifetimes: {
     attached() {
+      console.log('insure-component:1:attached')
       // 初始化参数
       this.init()
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const productInfoParams = {
-        url: `${this.data.getProductInfoApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getProductInfoApi}${url}`,
         data: {
           productId: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       // 获取产品信息
       this.getProductInfo(productInfoParams)
       const params = {
-        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: null,
           product_id: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       // 获取试算信息
       this.calculate(params)
@@ -124,14 +159,14 @@ Component({
       this.submitCalculate(currentData)
     },
     submitCalculate(currentData) {
-      if (!this.properties.uuid) {
-        wx.showToast({
-          title: '请求参数有误：no uuid',
-          icon: 'none',
-          duration: 3000
-        })
-        return
-      }
+      // if (!this.properties.uuid) {
+      //   wx.showToast({
+      //     title: '请求参数有误：no uuid',
+      //     icon: 'none',
+      //     duration: 3000
+      //   })
+      //   return
+      // }
       if (!this.properties.productId) {
         wx.showToast({
           title: '请求参数有误：no productId',
@@ -140,31 +175,60 @@ Component({
         })
         return
       }
-      // if (!this.properties.meetingUuid) {
-      //   wx.showToast({
-      //     title: '请求参数有误：no meetingUuid',
-      //     icon: 'none',
-      //     duration: 3000
-      //   })
-      //   return
-      // }
-      // if (!this.properties.wechatToken) {
-      //   wx.showToast({
-      //     title: '请求参数有误：no wechatToken',
-      //     icon: 'none',
-      //     duration: 3000
-      //   })
-      //   return
-      // }
+      if (!this.properties.meetingUuid) {
+        wx.showToast({
+          title: '请求参数有误：no meetingUuid',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.wechatToken) {
+        wx.showToast({
+          title: '请求参数有误：no wechatToken',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.wechatAppId) {
+        wx.showToast({
+          title: '请求参数有误：no wechatAppId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      if (!this.properties.appId) {
+        wx.showToast({
+          title: '请求参数有误：no appId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const params = {
-        url: `${this.data.submitCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.submitCalculateApi}${url}`,
         data: {
           current_data: currentData,
           product_id: this.properties.productId,
           meetingUuid: this.properties.meetingUuid,
           wechatToken: this.properties.wechatToken,
+          wechatAppId: this.properties.wechatAppId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       fetch.request(params)
         .then(res => {
@@ -254,14 +318,31 @@ Component({
     },
     // 事件处理：展示产品特色
     showDetailPopup() {
-      const params = {
-        url: `${this.data.getProductContentApi}?userUuid=${this.properties.uuid}`,
-        data: {
-          id: this.properties.productId
-        },
-        method: 'POST'
+      if (this.properties.productFeatureCustom) {
+        this.triggerEvent('onFeatureCustom')
+      } else {
+        this.init()
+        let url = ''
+        if (this.properties.uuid) {
+          url += `?userUuid=${this.properties.uuid}`
+        }
+        if (this.properties.appId) {
+          if (url.indexOf('?') > -1) {
+            url += `&appId=${this.properties.appId}`
+          } else {
+            url += `?appId=${this.properties.appId}`
+          }
+        }
+        const params = {
+          url: `${this.data.getProductContentApi}${url}`,
+          data: {
+            id: this.properties.productId
+          },
+          method: 'POST',
+          mode: this.properties.mode
+        }
+        this.getProductContent(params)
       }
-      this.getProductContent(params)
     },
     // 事件处理：关闭产品特色
     closeDetailPopup() {
@@ -275,8 +356,10 @@ Component({
     },
     // 接口处理
     getProductInfo(params) {
+      console.log('insure-component:2:getProductInfo', params)
       fetch.request(params)
         .then(res => {
+          console.log('insure-component:3:getProductInfo', res)
           this.setData({
             productInfo: res
           })
@@ -290,9 +373,11 @@ Component({
         })
     },
     calculate(params) {
+      console.log('insure-component:4:calculate', params)
       fetch.request(params)
         .then(res => {
           const data = this.translateData(res)
+          console.log('insure-component:5:calculate', data)
           this.setData({
             widgets: data.widgets,
             current_data: data.current_data,
@@ -323,13 +408,25 @@ Component({
           currentData.push(item.current)
         }
       })
+      let url = ''
+      if (this.properties.uuid) {
+        url += `?userUuid=${this.properties.uuid}`
+      }
+      if (this.properties.appId) {
+        if (url.indexOf('?') > -1) {
+          url += `&appId=${this.properties.appId}`
+        } else {
+          url += `?appId=${this.properties.appId}`
+        }
+      }
       const params = {
-        url: `${this.data.getCalculateApi}?userUuid=${this.properties.uuid}`,
+        url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: currentData,
           product_id: this.properties.productId
         },
-        method: 'POST'
+        method: 'POST',
+        mode: this.properties.mode
       }
       fetch.request(params)
         .then(res => {

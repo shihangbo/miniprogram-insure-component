@@ -65,7 +65,7 @@
       </view>
       <view class="right">
         <view class="pre">预计保费：<text>{{total_premium}}</text>元</view>
-        <view class="btn" bindtap="applyInsure">投保申请</view>
+        <view class="btn" bindtap="applyInsure" wx:if="{{widgets && widgets.length}}">投保申请</view>
       </view>
     </view>
   </view>

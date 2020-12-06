@@ -6,4 +6,10 @@
   bindapplyInsure="applyInsure"
   uuid="153cdcf26b66434e94079bca08666678"
   productId="101972"
+  meetingUuid="111"
+  wechatToken="222"
+  wechatAppId="333"
+  appId="518001"
+  productFeatureCustom
+  bindonFeatureCustom="onFeatureCustom"
   ></calculate>

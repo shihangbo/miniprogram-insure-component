@@ -1,22 +1,22 @@
 
 const devBaseUrl = 'https://insurance2a-api.wyins.net.cn'
 const proBaseUrl = 'https://insurance2a-api.wyins.net'
-const accountInfo = wx.getAccountInfoSync()
-const env = accountInfo.miniProgram.envVersion
-const BASE_URL = env === 'release' ? proBaseUrl : devBaseUrl
+// const accountInfo = wx.getAccountInfoSync()
+// const env = accountInfo.miniProgram.envVersion
+// const BASE_URL = env === 'release' ? proBaseUrl : devBaseUrl
 class HTTP {
   request({
-    url, data = {}, header = {}, method = 'GET'
+    url, data = {}, header = {}, method = 'GET', mode
   }) {
     return new Promise((resolve, reject) => {
-      this._request(url, data, header, method, resolve, reject)
+      this._request(url, data, header, method, resolve, reject, mode)
     })
   }
 
-  _request(url, data, header, method, resolve, reject) {
-    console.log(this, 'env: ', env, 'BASE_URL', BASE_URL)
+  _request(url, data, header, method, resolve, reject, mode) {
+    console.log(this, 'mode: ', mode)
     wx.request({
-      url: `${BASE_URL + url}`,
+      url: `${(mode === 'development' ? devBaseUrl : proBaseUrl) + url}`,
       data,
       header,
       method,
