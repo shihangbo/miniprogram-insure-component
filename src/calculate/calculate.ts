@@ -125,7 +125,8 @@ Component({
         url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: null,
-          product_id: this.properties.productId
+          product_id: this.properties.productId,
+          scenario: 'miniProgram'
         },
         method: 'POST',
         mode: this.properties.mode
