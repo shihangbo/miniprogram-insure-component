@@ -230,3 +230,44 @@
   width: 100%;
 }
 
+.insure-calculte .block.number_range {
+  height: 148rpx;
+}
+.input-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-content .input-content-up {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.input-content .input-content__input {
+  display: inline-block;
+  width: 100rpx;
+  height: 40rpx;
+  border: 1rpx solid #DDD;
+  border-radius: 6rpx;
+  padding: 6rpx 18rpx;
+  color: #FC733A;
+  text-align: center;
+}
+
+.input-content .input-content-down {
+  text-align: right;
+}
+
+.input-content .input-content__unit {
+  margin-left: 8rpx;
+}
+
+.input-content .input-content__tip {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.input-content .input-content__err {
+  color: #FC733A;
+}
