@@ -11,7 +11,7 @@
         <!-- 文本展示 -->
         <view class="block text bb1" wx:if="{{item.type === 'text' && item.hidden === 0}}">
           <text class="mr15 flex1 fs30">{{item.label}}</text>
-          <text>{{item.name}}</text>
+          <text class="fs30">{{item.name}}</text>
         </view>
         <!-- checkbox选择项 -->
         <view class="block select bb1" wx:if="{{item.type === 'select_checkbox' && item.hidden === 0}}">
@@ -19,10 +19,10 @@
           <view>
             <block wx:for="{{item.opts[item.key]}}" wx:key="*this" wx:for-item="it">
               <block wx:if="{{item.current && it.value === item.current.v}}">
-                <text bindtap="bindSelectChange" class="checkbox active" data-item="{{item}}" data-it="{{it}}">{{it.name}}</text>
+                <text bindtap="bindSelectChange" class="checkbox active fs30" data-item="{{item}}" data-it="{{it}}">{{it.name}}</text>
               </block>
               <block wx:else>
-                <text bindtap="bindSelectChange" class="checkbox" data-item="{{item}}" data-it="{{it}}">{{it.name}}</text>
+                <text bindtap="bindSelectChange" class="checkbox fs30" data-item="{{item}}" data-it="{{it}}">{{it.name}}</text>
               </block>
             </block>
           </view>
@@ -42,7 +42,7 @@
           <text class="mr15 flex1">{{item.label}}</text>
           <picker mode="date" value="{{item.current.v}}" data-item="{{item}}" start="{{item.opts[item.key][0].st}}" end="{{item.opts[item.key][0].et}}" bindchange="bindDateChange">
             <view class="flex-center calendar-text active">
-              <view class="picker">{{item.current.v}}</view>
+              <view class="picker fs30">{{item.current.v}}</view>
               <image class="signin" src="//media.winbaoxian.com/autoUpload/common/signin_0e67230840f371a.png"></image>
             </view>
           </picker>
@@ -52,6 +52,21 @@
           <text class="mr15 flex1 fs30">{{item.label}}</text>
           <text>{{item.type}}</text>
         </view> -->
+        <!-- 输入框 -->
+        <view class="block number_range bb1" wx:if="{{item.type === 'input_number_range' && item.hidden === 0}}">
+          <text class="mr15 flex1" style="width:120px;">{{item.label}}</text>
+          <view class="input-content">
+            <view class="input-content-up">
+              <text class="input-content__unit fs30">{{item.unit}}</text>
+              <input data-item="{{item}}" bindblur="inputNumberRangeChange" value="{{item.current.v}}" type="number" confirm-type="done" class="input-content__input"/>
+            </view>
+            <view class="input-content-down">
+              <text class="input-content__tip" wx:if="{{item.tip && !item.errorMessage}}">{{item.tip}}</text>
+              <text class="input-content__tip input-content__err" wx:if="{{item.tip && item.errorMessage}}">{{item.tip}}</text>
+              <!-- <text class="input-content__err" wx:if="{{item.errorMessage}}">{{item.errorMessage}}</text> -->
+            </view>
+          </view>
+        </view>
       </block>
     </view>
   </view>

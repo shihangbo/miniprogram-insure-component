@@ -125,7 +125,8 @@ Component({
         url: `${this.data.getCalculateApi}${url}`,
         data: {
           current_data: null,
-          product_id: this.properties.productId
+          product_id: this.properties.productId,
+          scenario: 'miniProgram'
         },
         method: 'POST',
         mode: this.properties.mode
@@ -316,6 +317,31 @@ Component({
       const self = this
       this.debounce(self.observerData, self, undefined, cpWidgets, currTarget)
     },
+    // input 输入框处理
+    inputNumberRangeChange(e) {
+      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
+      const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
+      const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
+        item.key === currTarget.key)
+      orginTarget.current.v = e.detail.value
+      const minValue = orginTarget.minValue
+      const maxValue = orginTarget.maxValue
+      const v = orginTarget.current.v
+      const unit = '份'
+      if ((minValue && v < minValue) || (maxValue && v > maxValue)) {
+        orginTarget.errorMessage = `${minValue}${unit}起购，最多购买${maxValue}${unit}`
+        wx.showToast({
+          title: orginTarget.errorMessage,
+          icon: 'none',
+          duration: 3000
+        })
+      } else {
+        orginTarget.errorMessage = ''
+        // 试算
+        const self = this
+        this.debounce(self.observerData, self, undefined, cpWidgets, currTarget)
+      }
+    },
     // 事件处理：展示产品特色
     showDetailPopup() {
       if (this.properties.productFeatureCustom) {
@@ -400,7 +426,7 @@ Component({
       this.data.widgets.forEach(item => {
         if (item.index === undefined) {
           currentData.push(item.current)
-        } else if (item.index || Number(item.index) === 0) {
+        } else if ((item.index || Number(item.index) === 0) && item.type !== 'input_number_range') {
           const temp = JSON.parse(JSON.stringify(item.current))
           temp.v = item.opts[item.key][item.index].value
           currentData.push(temp)
@@ -488,6 +514,15 @@ Component({
           item.current = current = currentData.find(it => it.k === item.key &&
             it.risk === item.riskCode)
         }
+        // 自定义输入框
+        if (item.type === 'input' && item.opts && item.opts[item.key]) {
+          const isNumberRange = item.opts[item.key].some(
+            it => it.opt_type === 'number_range'
+          )
+          if (isNumberRange) {
+            item.type += '_number_range'
+          }
+        }
         switch (item.type) {
           case 'text':
             this.translateText(item)
@@ -497,6 +532,9 @@ Component({
             break
           case 'calendar':
             this.translateCalendar(item, current)
+            break
+          case 'input_number_range':
+            this.translateInputNumberRange(item, current)
             break
           default:
         }
@@ -525,6 +563,32 @@ Component({
         // 增加index字段，保存用户选项，同时设置默认值
         item.index = idx
       }
+    },
+    translateInputNumberRange(item, current) {
+      const curr = item.opts[item.key].find(
+        it => it.opt_type === 'number_range'
+      )
+      if (curr) {
+        const unit = '份'
+        item.showInput = true
+        if (curr.value && curr.value.split('-')) {
+          item.minValue = Number(curr.value.split('-')[0])
+          item.maxValue = Number(curr.value.split('-')[1])
+          item.tip = `${curr.value.split('-')[0]}${unit}起购，最多购买${curr.value.split('-')[1]}${unit}`
+        }
+        if (curr.step_length) {
+          item.step = Number(curr.step_length)
+        }
+        item.unit = unit
+        item.errorMessage = ''
+        if (item.current) {
+          item.current.v = current.v
+        } else {
+          item.current = {}
+          item.current.v = current.v
+        }
+      }
+      item.index = 0
     },
     translateCalendar(item, current) {
       // 增加current字段，保存currentData的数据

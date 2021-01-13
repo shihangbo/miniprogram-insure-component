@@ -26,7 +26,7 @@ npm install -S miniprogram-insure-component
 | --- | --- | --- |   --- |  --- |
 |mode|小程序自定义环境变量，区分development/production，默认development 测试环境|String|development|-|
 |uuid|保险师传用户userUuid，中介通传openId，测试使用：153cdcf26b66434e94079bca08666678|String|无|-|
-|productId|（必传）产品ID，投保申请时有为空校验，测试使用：101972|String|无|-|
+|productId|（必传）产品ID，投保申请时有为空校验，测试使用：101972 / 102157|String|无|-|
 |meetingUuid|（必传）直播间的uuid，投保申请时有为空校验|String|无|-|
 |wechatToken|（必传）微信token，token + 微信appId 换取 openId，投保申请时有为空校验|String|无|-|
 |wechatAppId|（必传）微信appid，token + 微信appId 换取 openId，投保申请时有为空校验|String|无|-|
