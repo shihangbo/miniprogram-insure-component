@@ -149,7 +149,7 @@ Component({
       this.data.widgets.forEach(item => {
         if (item.index === undefined) {
           currentData.push(item.current)
-        } else if (item.index || Number(item.index) === 0) {
+        } else if ((item.index || Number(item.index) === 0) && item.type !== 'input_number_range') {
           const temp = JSON.parse(JSON.stringify(item.current))
           temp.v = item.opts[item.key][item.index].value
           currentData.push(temp)
@@ -208,6 +208,31 @@ Component({
         })
         return
       }
+      // 检验输入框
+      let errMsg
+      for (let i = 0, l = this.data.widgets.length; i < l; i++) {
+        const item = this.data.widgets[i]
+        const minValue = item.minValue
+        const maxValue = item.maxValue
+        const v = Number(item.current.v)
+        const unit = '份'
+        if ((minValue || minValue === 0) && maxValue && v) {
+          if ((minValue && v < minValue) || (maxValue && v > maxValue)) {
+            errMsg = `${minValue}${unit}起购，最多购买${maxValue}${unit}`
+            break
+          }
+        }
+        errMsg = ''
+      }
+      if (errMsg) {
+        wx.showToast({
+          title: errMsg,
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
+
       let url = ''
       if (this.properties.uuid) {
         url += `?userUuid=${this.properties.uuid}`
@@ -319,7 +344,7 @@ Component({
     },
     // input 输入框处理
     inputNumberRangeChange(e) {
-      const cpWidgets = JSON.parse(JSON.stringify(this.data.widgets))
+      const cpWidgets = this.data.widgets
       const currTarget = e.currentTarget.dataset.item || e.target.dataset.item
       const orginTarget = cpWidgets.find(item => item.riskCode === currTarget.riskCode &&
         item.key === currTarget.key)
@@ -334,6 +359,9 @@ Component({
           title: orginTarget.errorMessage,
           icon: 'none',
           duration: 3000
+        })
+        this.setData({
+          total_premium: Number(0).toFixed(2)
         })
       } else {
         orginTarget.errorMessage = ''
