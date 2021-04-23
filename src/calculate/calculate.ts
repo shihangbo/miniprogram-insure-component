@@ -49,6 +49,12 @@ Component({
       optionalTypes: [Number],
       required: true
     },
+    // 订单ID number
+    preorderId: {
+      type: Number,
+      optionalTypes: [String],
+      required: true
+    },
     // 微信appId
     wechatAppId: {
       type: String,
@@ -200,6 +206,14 @@ Component({
         })
         return
       }
+      if (!this.properties.preorderId) {
+        wx.showToast({
+          title: '请求参数有误：no preorderId',
+          icon: 'none',
+          duration: 3000
+        })
+        return
+      }
       if (!this.properties.appId) {
         wx.showToast({
           title: '请求参数有误：no appId',
@@ -251,7 +265,8 @@ Component({
           product_id: this.properties.productId,
           meetingUuid: this.properties.meetingUuid,
           wechatToken: this.properties.wechatToken,
-          wechatAppId: this.properties.wechatAppId
+          wechatAppId: this.properties.wechatAppId,
+          preorderId: this.properties.preorderId
         },
         method: 'POST',
         mode: this.properties.mode
